@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SVG Bubble Shooter</title>
+
+<style>
+body{
+    background:#0f172a;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    font-family:Arial;
+}
+
+#gameBox{
+    background:#020617;
+    border-radius:16px;
+    padding:10px;
+    box-shadow:0 0 20px #38bdf8;
+}
+
+svg{
+    background:#020617;
+    border-radius:12px;
+}
+
+#score{
+    color:white;
+    text-align:center;
+    font-size:20px;
+    margin-bottom:8px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="gameBox">
+    <div id="score">Score: 0</div>
+
+    <svg id="game" width="400" height="500">
+        <!-- Shooter -->
+        <circle id="shooter" cx="200" cy="470" r="15" fill="cyan"/>
+    </svg>
+</div>
+
+<script>
+
+const svg = document.getElementById("game");
+const shooter = document.getElementById("shooter");
+const scoreText = document.getElementById("score");
+
+let score = 0;
+let shooting = false;
+let bullet = null;
+
+const colors = ["red","yellow","lime","cyan","magenta","orange"];
+
+function randomColor(){
+    return colors[Math.floor(Math.random()*colors.length)];
+}
+
+function createBullet(){
+    bullet = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    bullet.setAttribute("cx", shooter.getAttribute("cx"));
+    bullet.setAttribute("cy", shooter.getAttribute("cy"));
+    bullet.setAttribute("r", 12);
+    bullet.setAttribute("fill", randomColor());
+    svg.appendChild(bullet);
+}
+
+svg.addEventListener("click", ()=>{
+    if(shooting) return;
+    createBullet();
+    shooting = true;
+});
+
+function gameLoop(){
+    if(shooting && bullet){
+        let y = parseFloat(bullet.getAttribute("cy"));
+        y -= 6;
+        bullet.setAttribute("cy", y);
+
+        if(y < 20){
+            stopBullet();
+        }
+    }
+    requestAnimationFrame(gameLoop);
+}
+
+function stopBullet(){
+    shooting = false;
+    score += 10;
+    scoreText.innerText = "Score: " + score;
+}
+
+gameLoop();
+
+</script>
+
+</body>
+</html>
